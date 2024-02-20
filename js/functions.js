@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const checkLength = (string, length) => {
   if (string.length <= length) {
     return true;
@@ -6,11 +7,6 @@ const checkLength = (string, length) => {
   return false;
 
 };
-
-console.log('Проверка функции checkLength(), результат:', checkLength('проверяемая строка', 20));
-console.log('Проверка функции checkLength(), результат:', checkLength('проверяемая строка', 18));
-console.log('Проверка функции checkLength(), результат:', checkLength('проверяемая строка', 10));
-
 
 const checkPalindrome = (string) => {
   const stringReplace = string.replaceAll(' ', '');
@@ -27,12 +23,6 @@ const checkPalindrome = (string) => {
 
   return false;
 };
-
-console.log('Проверка функции checkPalindrome(), результат:', checkPalindrome('потоп'));
-console.log('Проверка функции checkPalindrome(), результат:', checkPalindrome('Кекс'));
-
-
-// Дополнительное задание.
 
 const findNumber = (string) => {
   const typeString = string.toString();
@@ -56,7 +46,3 @@ const findNumber = (string) => {
   return numbers;
 
 };
-
-console.log('Проверка функции findNumber(), результат:', findNumber('21 февраля 2024'));
-console.log('Проверка функции findNumber(), результат:', findNumber(-2024));
-console.log('Проверка функции findNumber(), результат:', findNumber('хороший год'));
