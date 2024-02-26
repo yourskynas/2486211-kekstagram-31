@@ -26,12 +26,6 @@ const getRandomInteger = (a, b) => {
   return Math.floor(result);
 };
 
-const randomDescription = getRandomInteger(0, description.length - 1);
-const likes = getRandomInteger(15, 200);
-const getRandomAvatar = getRandomInteger(1, 6);
-const randomMessage = getRandomInteger(0, message.length - 1);
-const randomName = getRandomInteger(0, name.length - 1);
-
 /**
  * Функция по созданию объекта
 * @return { {id: number, url: string, description: string, likes: number, comments: {id: number, avatar: string, message: string, name: string}}} - объект
@@ -39,19 +33,27 @@ const randomName = getRandomInteger(0, name.length - 1);
 
 const creatObject = () => ({
 
-  id: idObject++,
-  url: `photos/${ numPhoto++ }.jpg`,
-  description: description[randomDescription],
-  likes: likes,
-  comments:
-    {
-      idComment: idComment++,
-      avatar: `img/avatar-${ getRandomAvatar }.svg`,
-      message: message[randomMessage],
-      name: name[randomName]
-    }
+  const randomDescription = getRandomInteger(0, description.length - 1);
+  const likes = getRandomInteger(15, 200);
+  const getRandomAvatar = getRandomInteger(1, 6);
+  const randomMessage = getRandomInteger(0, message.length - 1);
+  const randomName = getRandomInteger(0, name.length - 1);
+
+  return {
+    id: idObject++,
+    url: `photos/${ numPhoto++ }.jpg`,
+    description: description[randomDescription],
+    likes: likes,
+    comments:
+      {
+        idComment: idComment++,
+        avatar: `img/avatar-${ getRandomAvatar }.svg`,
+        message: message[randomMessage],
+        name: name[randomName]
+      }
+  }
 });
 
 const listOfObject = Array.from({length: 25}, creatObject);
-console.log(listOfObject);
+console.log(creatObject());
 
