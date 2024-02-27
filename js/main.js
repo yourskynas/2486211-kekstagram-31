@@ -1,15 +1,11 @@
-let idObject = 1;
-let numPhoto = 1;
-let idComment = 1;
-
-const description = [
+const DESCRIPTION = [
   'Доброе утро начинается в обед',
   'Наконец-то в отпуск',
   'Насыщенный день',
   'А где-то без меня волнуется море'
 ];
 
-const message = [
+const MESSAGE = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -17,7 +13,7 @@ const message = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-const name = ['Никита', 'Настя', 'Елена', 'Гарик', 'Елизавета', 'Владимир'];
+const NAME = ['Никита', 'Настя', 'Елена', 'Гарик', 'Елизавета', 'Владимир'];
 
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -27,33 +23,48 @@ const getRandomInteger = (a, b) => {
 };
 
 /**
- * Функция по созданию объекта
-* @return { {id: number, url: string, description: string, likes: number, comments: {id: number, avatar: string, message: string, name: string}}} - объект
+ * @type {number} idComment переменная, которая будет увеличиваться в функции creatComment()
  */
+let idComment = 0;
 
-const creatObject = () => ({
-
-  const randomDescription = getRandomInteger(0, description.length - 1);
-  const likes = getRandomInteger(15, 200);
-  const getRandomAvatar = getRandomInteger(1, 6);
-  const randomMessage = getRandomInteger(0, message.length - 1);
-  const randomName = getRandomInteger(0, name.length - 1);
-
-  return {
-    id: idObject++,
-    url: `photos/${ numPhoto++ }.jpg`,
-    description: description[randomDescription],
-    likes: likes,
-    comments:
-      {
-        idComment: idComment++,
-        avatar: `img/avatar-${ getRandomAvatar }.svg`,
-        message: message[randomMessage],
-        name: name[randomName]
-      }
-  }
+/**
+ * Функция по созданию комментария(объекта)
+* @return { {idComment: number, avatar: string, message: string, name: string} } созданный объект
+ */
+const creatComment = () => ({
+  idComment: idComment++,
+  avatar: `img/avatar-${ getRandomInteger(1, 6) }.svg`,
+  message: MESSAGE[getRandomInteger(0, DESCRIPTION.length - 1)],
+  name: NAME[getRandomInteger(0, NAME.length - 1)]
 });
 
-const listOfObject = Array.from({length: 25}, creatObject);
-console.log(creatObject());
+/**
+ * @type {number} generatePhotoId переменная, которая будет увеличиваться
+ * в функции с замыканием creatObject() и присваиваться двум ключам id, url
+ */
+let generatePhotoId = 0;
+
+/**
+ * Функция по созданию фотокарточки(объекта)
+* @return { {id: number, url: string, description: string, likes: number} } созданный объект
+ */
+const creatObject = () => {
+  generatePhotoId++;
+  return {
+    id: generatePhotoId,
+    url: `photos/${ generatePhotoId }.jpg`,
+    description: DESCRIPTION[getRandomInteger(0, DESCRIPTION.length - 1)],
+    likes: getRandomInteger(15, 200),
+    comments: Array.from({length: getRandomInteger(0, 30)}, creatComment)
+  };
+};
+
+/**
+ * Функция по созданию массива объектов
+ * @param {number} lengthArray требуемое количество объектов в массиве
+ * @param {requestCallback} callback функция по созданию объекта
+ * @return { Array<object> } созданный массив объектов
+ */
+const creatArray = (lengthArray, callback) => Array.from({length: lengthArray}, callback);
+creatArray(25, creatObject);
 
