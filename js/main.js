@@ -15,6 +15,8 @@ const MESSAGE = [
 ];
 const NAME = ['Никита', 'Настя', 'Елена', 'Гарик', 'Елизавета', 'Владимир'];
 
+const ALLPHOTOS = 25;
+
 const getRandomInteger = (a, b) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -31,7 +33,7 @@ let idComment = 0;
  * Функция по созданию комментария(объекта)
 * @return { {idComment: number, avatar: string, message: string, name: string} } созданный объект
  */
-const creatComment = () => ({
+const createComment = () => ({
   idComment: idComment++,
   avatar: `img/avatar-${ getRandomInteger(1, 6) }.svg`,
   message: MESSAGE[getRandomInteger(0, DESCRIPTION.length - 1)],
@@ -48,23 +50,22 @@ let generatePhotoId = 0;
  * Функция по созданию фотокарточки(объекта)
 * @return { {id: number, url: string, description: string, likes: number} } созданный объект
  */
-const creatObject = () => {
+const createPhoto = () => {
   generatePhotoId++;
   return {
     id: generatePhotoId,
     url: `photos/${ generatePhotoId }.jpg`,
     description: DESCRIPTION[getRandomInteger(0, DESCRIPTION.length - 1)],
     likes: getRandomInteger(15, 200),
-    comments: Array.from({length: getRandomInteger(0, 30)}, creatComment)
+    comments: Array.from({length: getRandomInteger(0, 30)}, createComment)
   };
 };
 
 /**
  * Функция по созданию массива объектов
  * @param {number} lengthArray требуемое количество объектов в массиве
- * @param {requestCallback} callback функция по созданию объекта
  * @return { Array<object> } созданный массив объектов
  */
-const creatArray = (lengthArray, callback) => Array.from({length: lengthArray}, callback);
-creatArray(25, creatObject);
+const createPhotos = (count) => Array.from({length: count}, createPhoto);
+createPhotos(ALLPHOTOS, createPhoto);
 
