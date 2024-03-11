@@ -17,7 +17,10 @@ const MESSAGE = [
 ];
 const NAME = ['Никита', 'Настя', 'Елена', 'Гарик', 'Елизавета', 'Владимир'];
 
-const ALLPHOTOS = 25;
+/**
+ * @type {number} COUNT_OBJECTS количество фотографий в генерируемом массиве
+ */
+const COUNT_OBJECTS = 25;
 
 /**
  * @type {number} idComment переменная, которая будет увеличиваться в функции creatComment()
@@ -63,4 +66,4 @@ const createPhoto = () => {
  */
 const createPhotos = (count) => Array.from({length: count}, createPhoto);
 
-export {createPhotos};
+export {createPhotos, COUNT_OBJECTS};
