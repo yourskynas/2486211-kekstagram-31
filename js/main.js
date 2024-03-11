@@ -1,2 +1,4 @@
-import './data.js';
-import './util.js';
+import { createPhotos, COUNT_OBJECTS } from './mocks/data.js';
+import { renderPhotos } from './render-photos.js';
+
+renderPhotos(createPhotos(COUNT_OBJECTS));
