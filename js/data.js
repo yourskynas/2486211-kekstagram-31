@@ -62,4 +62,5 @@ const createPhoto = () => {
  * @return { Array<object> } созданный массив объектов
  */
 const createPhotos = (count) => Array.from({length: count}, createPhoto);
-createPhotos(ALLPHOTOS, createPhoto);
+
+export {createPhotos};
