@@ -15,6 +15,27 @@ const renderPhotos = (photosData) => {
   });
 
   photosElement.append(randomPhotoSection);
+
+  //перенести в другой модуль
+  const fullPhotoElement = document.querySelector('.big-picture');
+  const minipictures = photosElement.querySelectorAll('.picture');
+  const fullImgEl = fullPhotoElement.querySelector('img');
+  const likesFull = fullPhotoElement.querySelector('.likes-count');
+  const numCommentsFull = fullPhotoElement.querySelector('.social__comment-total-count');
+
+  for (const minipicture of minipictures) {
+    const minipictureSrc = minipicture.querySelector('img');
+    const minipictureLikes = minipicture.querySelector('.picture__likes');
+    const minipictureNumComments = minipicture.querySelector('.picture__comments');
+
+    minipicture.addEventListener('click', () => {
+      fullPhotoElement.classList.remove('hidden');
+      fullImgEl.src = minipictureSrc.src;
+      likesFull.textContent = minipictureLikes.textContent;
+      numCommentsFull.textContent = minipictureNumComments.textContent;
+    });
+  }
+
 };
 
 export {renderPhotos};
