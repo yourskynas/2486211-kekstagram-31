@@ -1,5 +1,3 @@
-// import { renderComment } from './render-full-photo.js';
-
 const renderPhotos = (photosData) => {
 
   const photosEl = document.querySelector('.pictures');
