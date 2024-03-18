@@ -4,7 +4,11 @@ const DESCRIPTION = [
   'Доброе утро начинается в обед',
   'Наконец-то в отпуск',
   'Насыщенный день',
-  'А где-то без меня волнуется море'
+  'А где-то без меня волнуется море',
+  'Ушел в себя. Выйду не скоро :)',
+  'Нужно почаще отдыхать)',
+  'Пусть хорошее сбудется',
+  'Gooood day!)))'
 ];
 
 const MESSAGE = [
@@ -34,7 +38,7 @@ let idComment = 0;
 const createComment = () => ({
   idComment: idComment++,
   avatar: `img/avatar-${ getRandomInteger(1, 6) }.svg`,
-  message: MESSAGE[getRandomInteger(0, DESCRIPTION.length - 1)],
+  message: MESSAGE[getRandomInteger(0, MESSAGE.length - 1)],
   name: NAME[getRandomInteger(0, NAME.length - 1)]
 });
 
