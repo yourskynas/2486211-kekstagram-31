@@ -36,19 +36,17 @@ const openNextComments = () => {
 const openComments = (comments) => {
   arrayComments = comments;
   openNextComments();
-  btnCommentsLoaderEl.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    openNextComments();
-  });
 };
+
+btnCommentsLoaderEl.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  openNextComments();
+});
 
 const closeComments = () => {
   btnCommentsLoaderEl.classList.remove('hidden');
   count = 0;
   socialComments.innerHTML = '';
-  btnCommentsLoaderEl.removeEventListener('click', () => {
-    openNextComments();
-  });
 };
 
 export {openComments, closeComments};
