@@ -1,7 +1,6 @@
 const STEP = 5;
-// eslint-disable-next-line prefer-const
 let count = 0;
-let arrayComments = [];
+let allComments = [];
 const fullPhotoEl = document.querySelector('.big-picture');
 const socialComments = fullPhotoEl.querySelector('.social__comments');
 const socialCommentEl = fullPhotoEl.querySelector('.social__comment');
@@ -11,7 +10,7 @@ const btnCommentsLoaderEl = fullPhotoEl.querySelector('.comments-loader');
 socialComments.innerHTML = '';
 
 const openNextComments = () => {
-  const openedComments = arrayComments.slice(count, count + STEP);
+  const openedComments = allComments.slice(count, count + STEP);
   const openedCommentsLength = openedComments.length + count;
 
   openedComments.forEach((comment) => {
@@ -24,9 +23,9 @@ const openNextComments = () => {
   });
 
   commentShownCount.textContent = openedCommentsLength;
-  commentTotalCount.textContent = arrayComments.length;
+  commentTotalCount.textContent = allComments.length;
 
-  if(openedCommentsLength >= arrayComments.length) {
+  if(openedCommentsLength >= allComments.length) {
     btnCommentsLoaderEl.classList.add('hidden');
   }
 
@@ -34,7 +33,7 @@ const openNextComments = () => {
 };
 
 const openComments = (comments) => {
-  arrayComments = comments;
+  allComments = comments;
   openNextComments();
 };
 
