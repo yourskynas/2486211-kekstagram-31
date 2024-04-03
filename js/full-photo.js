@@ -14,11 +14,11 @@ const openFullPhoto = ({url, description, likes, comments}) => {
 };
 
 const closeFullPhoto = () => {
-  closeComments();
   fullPhotoEl.classList.add('hidden');
   bodyEl.classList.remove('modal-open');
   // eslint-disable-next-line no-use-before-define
   document.removeEventListener('keydown', onFullPhotoEscKeydown);
+  closeComments();
 };
 
 const onFullPhotoEscKeydown = (evt) => {
