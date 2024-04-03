@@ -2,14 +2,14 @@ const STEP = 5;
 let count = 0;
 let allComments = [];
 const fullPhotoEl = document.querySelector('.big-picture');
-const socialComments = fullPhotoEl.querySelector('.social__comments');
+const socialCommentsEls = fullPhotoEl.querySelector('.social__comments');
 const socialCommentEl = fullPhotoEl.querySelector('.social__comment');
-const commentShownCount = fullPhotoEl.querySelector('.social__comment-shown-count');
-const commentTotalCount = fullPhotoEl.querySelector('.social__comment-total-count');
+const commentShownCountEl = fullPhotoEl.querySelector('.social__comment-shown-count');
+const commentTotalCountEl = fullPhotoEl.querySelector('.social__comment-total-count');
 const btnCommentsLoaderEl = fullPhotoEl.querySelector('.comments-loader');
-socialComments.innerHTML = '';
+socialCommentsEls.innerHTML = '';
 
-const openNextComments = () => {
+const showNextComments = () => {
   const openedComments = allComments.slice(count, count + STEP);
   const openedCommentsLength = openedComments.length + count;
 
@@ -19,11 +19,11 @@ const openNextComments = () => {
     socialPicture.src = comment.avatar;
     socialPicture.alt = comment.name;
     socialCommentCloneItem.querySelector('.social__text').textContent = comment.message;
-    socialComments.append(socialCommentCloneItem);
+    socialCommentsEls.append(socialCommentCloneItem);
   });
 
-  commentShownCount.textContent = openedCommentsLength;
-  commentTotalCount.textContent = allComments.length;
+  commentShownCountEl.textContent = openedCommentsLength;
+  commentTotalCountEl.textContent = allComments.length;
 
   if(openedCommentsLength >= allComments.length) {
     btnCommentsLoaderEl.classList.add('hidden');
@@ -32,20 +32,20 @@ const openNextComments = () => {
   count += STEP;
 };
 
-const openComments = (comments) => {
+const showComments = (comments) => {
   allComments = comments;
-  openNextComments();
+  showNextComments();
 };
 
 btnCommentsLoaderEl.addEventListener('click', (evt) => {
   evt.preventDefault();
-  openNextComments();
+  showNextComments();
 });
 
-const closeComments = () => {
+const hideComments = () => {
   btnCommentsLoaderEl.classList.remove('hidden');
   count = 0;
-  socialComments.innerHTML = '';
+  socialCommentsEls.innerHTML = '';
 };
 
-export {openComments, closeComments};
+export {showComments, hideComments};

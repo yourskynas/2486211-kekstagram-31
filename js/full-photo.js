@@ -1,4 +1,4 @@
-import { openComments, closeComments } from './open-comments.js';
+import { showComments, hideComments } from './open-comments.js';
 
 const bodyEl = document.querySelector('body');
 const fullPhotoEl = document.querySelector('.big-picture');
@@ -10,7 +10,7 @@ const openFullPhoto = ({url, description, likes, comments}) => {
   fullPhotoEl.querySelector('img').src = url;
   fullPhotoEl.querySelector('.likes-count').textContent = likes;
   fullPhotoEl.querySelector('.social__caption').textContent = description;
-  openComments(comments);
+  showComments(comments);
 };
 
 const closeFullPhoto = () => {
@@ -18,7 +18,7 @@ const closeFullPhoto = () => {
   bodyEl.classList.remove('modal-open');
   // eslint-disable-next-line no-use-before-define
   document.removeEventListener('keydown', onFullPhotoEscKeydown);
-  closeComments();
+  hideComments();
 };
 
 const onFullPhotoEscKeydown = (evt) => {
