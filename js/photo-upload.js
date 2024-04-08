@@ -1,4 +1,5 @@
 import { onEffectChange } from './effects.js';
+import { sendData } from './fetch.js';
 
 const formEl = document.querySelector('.img-upload__form');
 const UploadFileEl = formEl.querySelector('.img-upload__input');
@@ -6,14 +7,37 @@ const inputHashtagsEl = formEl.querySelector('.text__hashtags');
 const inputDescriptionEl = formEl.querySelector('.text__description');
 const editingFormEl = formEl.querySelector('.img-upload__overlay');
 const btnCloseEditingEl = formEl.querySelector('.img-upload__cancel');
+const btnSubmitEl = formEl.querySelector('.img-upload__submit');
 const bodyEl = document.querySelector('body');
+const successPopapEl = document.querySelector('#success').content.querySelector('.success');
+const btnSuccessEl = successPopapEl.querySelector('.success__button');
+const errorPopapEl = document.querySelector('#error').content.querySelector('.error');
+const dataErrorEl = document.querySelector('#data-error').content.querySelector('.data-error');
+const btnErrorEl = errorPopapEl.querySelector('.error__button');
+
+const ALERT_SHOW_TIME = 5000;
 const MAX_HASHTAGS = 5;
+
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
 
 const pristine = new Pristine(formEl, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error'
 }, false);
+
+const blockSubmitButton = () => {
+  btnSubmitEl.disabled = true;
+  btnSubmitEl.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  btnSubmitEl.disabled = false;
+  btnSubmitEl.textContent = SubmitButtonText.IDLE;
+};
 
 const onEditingCloseBtnClick = () => {
   closeEditing();
@@ -30,28 +54,58 @@ const onInputEscKeydown = (evt) => {
   }
 };
 
-const onFormSubmit = (evt) => {
-  evt.preventDefault();
-
-  const isValid = pristine.validate();
-  if (isValid) {
-    formEl.submit();
+const onMessageCloseBtn = (evt) => {
+  if (evt.target === btnSuccessEl) {
+    successPopapEl.remove();
   }
+  errorPopapEl.remove();
+  document.removeEventListener('click', onMessageCloseBtn);
+};
+
+const showMessage = (btn, message) => {
+  btn.addEventListener('click', onMessageCloseBtn);
+  document.addEventListener('click', onMessageCloseBtn);
+
+  bodyEl.append(message);
+};
+
+const showAlert = () => {
+  bodyEl.append(dataErrorEl);
+
+  setTimeout(() => {
+    dataErrorEl.remove();
+  }, ALERT_SHOW_TIME);
+};
+
+const setUserFormSubmit = (onSuccess) => {
+  formEl.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(new FormData(evt.target))
+        .then(onSuccess)
+        .catch(() => {
+          showMessage(btnErrorEl, errorPopapEl);
+        })
+        .finally(unblockSubmitButton);
+    }
+  });
 };
 
 /**
  * Функция закрытия формы редактирования
  */
-const closeEditing = () => {
+function closeEditing() {
   editingFormEl.classList.add('hidden');
   bodyEl.classList.remove('modal-open');
-  btnCloseEditingEl.removeEventListener('click', onEditingCloseBtnClick);
   formEl.removeEventListener('change', onEffectChange);
-  formEl.removeEventListener('submit', onFormSubmit);
   document.removeEventListener('keydown', onInputEscKeydown);
   UploadFileEl.value = '';
   formEl.reset();
-};
+  showMessage(btnSuccessEl, successPopapEl);
+}
 
 /**
  * Функция с обработчиками, после загрузки фото открытие редактора фото,
@@ -64,7 +118,6 @@ const initUploadPopap = () => {
     bodyEl.classList.add('modal-open');
     btnCloseEditingEl.addEventListener('click', onEditingCloseBtnClick);
     formEl.addEventListener('change', onEffectChange);
-    formEl.addEventListener('submit', onFormSubmit);
     document.addEventListener('keydown', onInputEscKeydown);
   });
   UploadFileEl.removeAttribute('required');
@@ -123,4 +176,4 @@ pristine.addValidator(
   'Длина комментария не более 140 символов'
 );
 
-export {initUploadPopap};
+export {initUploadPopap, setUserFormSubmit, closeEditing, showAlert};
