@@ -157,52 +157,43 @@ const initUploadPopap = () => {
   });
 };
 
-let errorMessage = '';
+let clearedHashtagsToValidate = [];
 
-const error = () => errorMessage;
-
-const isHashtagValidate = (value) => {
-  errorMessage = '';
-
-  const hashtagsText = value.toLowerCase().trim();
-
-  if (hashtagsText.length === 0) {
-    return true;
-  }
-
-  const hashtagsList = hashtagsText.split(' ');
-
-  const validators = [
-    {
-      check: hashtagsList.some((el) => !/^#[a-zа-яё0-9]{1,19}$/i.test(el)),
-      error: 'Хэштег должен начинаться с "#" и не может содержать пробелы, спецсимволы, символы пунктуации, эмодзи и т. д',
-    },
-    {
-      check: hashtagsList.some((el, i) => hashtagsList.includes(el, i + 1)),
-      error: 'Хэштеги не должны повторяться',
-    },
-    {
-      check: hashtagsList.length > MAX_HASHTAGS,
-      error: `Максимальное количество хэштегов ${MAX_HASHTAGS}`,
-    }
-  ];
-
-  return validators.forEach((validator) => {
-    const isInvalid = validator.check;
-    if (isInvalid) {
-      errorMessage = validator.error;
-    }
-    return !isInvalid;
-  });
+const validateHashtagsRegexp = (value) => {
+  const hashtagRegexp = /^#[a-zа-яё0-9]{1,19}$/i;
+  const hashtagsToValidate = value.trim().toLowerCase().split(' ');
+  clearedHashtagsToValidate = hashtagsToValidate.filter(Boolean);
+  return clearedHashtagsToValidate.every((hashtag) => hashtagRegexp.test(hashtag));
 };
 
-const isDescrtiptionValidate = (value) => value.length <= 140;
+const validateHashtagsDuplicates = () => {
+  if (clearedHashtagsToValidate) {
+    const duplicates = clearedHashtagsToValidate.filter((element, index, elements) => elements.indexOf(element) !== index);
+    return !duplicates.length;
+  }
+};
+
+const validateHashtagsCount = () => clearedHashtagsToValidate.length <= MAX_HASHTAGS;
 
 pristine.addValidator(
   inputHashtagsEl,
-  isHashtagValidate,
-  error
+  validateHashtagsRegexp,
+  'Хештеги должны начинаться с #, содержать 1-19 букв без спецсимволов, символов пунктуации, эмодзи и т. д'
 );
+
+pristine.addValidator(
+  inputHashtagsEl,
+  validateHashtagsDuplicates,
+  'Хештеги не должны повторяться'
+);
+
+pristine.addValidator(
+  inputHashtagsEl,
+  validateHashtagsCount,
+  'Не более 5 хештегов'
+);
+
+const isDescrtiptionValidate = (value) => value.length <= 140;
 
 pristine.addValidator(
   inputDescriptionEl,
