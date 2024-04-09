@@ -16,7 +16,7 @@ const getData = () => fetch(
     throw new Error();
   });
 
-const sendData = (body) => fetch(
+const sendData = (body, cb) => fetch(
   `${BASE_URL}${Route.SEND_DATA}`,
   {
     method: 'POST',
@@ -26,6 +26,7 @@ const sendData = (body) => fetch(
     if (!response.ok) {
       throw new Error();
     }
+    cb();
   })
   .catch(() => {
     throw new Error();
