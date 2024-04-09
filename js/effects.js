@@ -9,20 +9,25 @@ const imageEl = formEl.querySelector('img');
 const effectLevelEl = formEl.querySelector('.img-upload__effect-level');
 const effectsList = formEl.querySelectorAll('.effects__radio');
 
+const Scale = {
+  MIN: 25,
+  MAX: 100
+};
+
 effectLevelEl.classList.add('hidden');
 
 let numberScaleValue = parseInt(btnScaleValueEl.value.replace('%'), 10);
 const onbtnScaleSmaller = () => {
-  if (numberScaleValue > 25) {
-    numberScaleValue -= 25;
+  if (numberScaleValue > Scale.MIN) {
+    numberScaleValue -= Scale.MIN;
   }
   btnScaleValueEl.value = `${ numberScaleValue }%`;
   imageEl.style.transform = `scale(${ numberScaleValue / 100 })`;
 };
 
 const onbtnScaleBigger = () => {
-  if (numberScaleValue < 100) {
-    numberScaleValue += 25;
+  if (numberScaleValue < Scale.MAX) {
+    numberScaleValue += Scale.MIN;
   }
   btnScaleValueEl.value = `${ numberScaleValue }%`;
   imageEl.style.transform = `scale(${ numberScaleValue / 100 })`;
@@ -90,6 +95,17 @@ noUiSlider.create(effectSliderEl, {
   start: 100,
   step: 1,
   connect: 'lower',
+  format: {
+    to: function (value) {
+      if (Number.isInteger(value)) {
+        return value.toFixed(0);
+      }
+      return value.toFixed(1);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
 });
 
 const addFilter = (filter, value) => {

@@ -1,8 +1,19 @@
 import { onEffectChange } from './effects.js';
 import { sendData } from './fetch.js';
+import { isEscapeKey } from './util.js';
+
+const ALERT_SHOW_TIME = 5000;
+const MAX_HASHTAGS = 5;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
 
 const formEl = document.querySelector('.img-upload__form');
 const UploadFileEl = formEl.querySelector('.img-upload__input');
+const imgEl = formEl.querySelector('.img-upload__preview img');
 const inputHashtagsEl = formEl.querySelector('.text__hashtags');
 const inputDescriptionEl = formEl.querySelector('.text__description');
 const editingFormEl = formEl.querySelector('.img-upload__overlay');
@@ -14,14 +25,6 @@ const btnSuccessEl = successPopapEl.querySelector('.success__button');
 const errorPopapEl = document.querySelector('#error').content.querySelector('.error');
 const dataErrorEl = document.querySelector('#data-error').content.querySelector('.data-error');
 const btnErrorEl = errorPopapEl.querySelector('.error__button');
-
-const ALERT_SHOW_TIME = 5000;
-const MAX_HASHTAGS = 5;
-
-const SubmitButtonText = {
-  IDLE: 'Сохранить',
-  SENDING: 'Сохраняю...'
-};
 
 const pristine = new Pristine(formEl, {
   classTo: 'img-upload__field-wrapper',
@@ -44,7 +47,7 @@ const onEditingCloseBtnClick = () => {
 };
 
 const onInputEscKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     if (document.activeElement === inputHashtagsEl || document.activeElement === inputDescriptionEl) {
       evt.stopPropagation();
@@ -59,13 +62,32 @@ const onMessageCloseBtn = (evt) => {
     successPopapEl.remove();
   }
   errorPopapEl.remove();
-  document.removeEventListener('click', onMessageCloseBtn);
 };
+
+const onPopapEscKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    closePopap();
+  }
+};
+
+// const onOutsideTarget = (evt) => {
+//   if (evt.target === successPopapEl || evt.target === errorPopapEl) {
+//     closePopap();
+//   }
+// };
+
+function closePopap () {
+  successPopapEl.remove();
+  errorPopapEl.remove();
+  document.removeEventListener('keydown', onPopapEscKeydown);
+  // document.removeEventListener('click', onOutsideTarget);
+}
 
 const showMessage = (btn, message) => {
   btn.addEventListener('click', onMessageCloseBtn);
-  document.addEventListener('click', onMessageCloseBtn);
-
+  document.addEventListener('keydown', onPopapEscKeydown);
+  // document.addEventListener('click', onOutsideTarget);
   bodyEl.append(message);
 };
 
@@ -77,6 +99,13 @@ const showAlert = () => {
   }, ALERT_SHOW_TIME);
 };
 
+const showMessageError = () => {
+  showMessage(btnErrorEl, errorPopapEl);
+};
+const showMessageSucces = () => {
+  showMessage(btnSuccessEl, successPopapEl);
+};
+
 const setUserFormSubmit = (onSuccess) => {
   formEl.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -84,12 +113,7 @@ const setUserFormSubmit = (onSuccess) => {
     const isValid = pristine.validate();
     if (isValid) {
       blockSubmitButton();
-      sendData(new FormData(evt.target))
-        .then(onSuccess)
-        .catch(() => {
-          showMessage(btnErrorEl, errorPopapEl);
-        })
-        .finally(unblockSubmitButton);
+      sendData(new FormData(evt.target), onSuccess);
     }
   });
 };
@@ -104,8 +128,18 @@ function closeEditing() {
   document.removeEventListener('keydown', onInputEscKeydown);
   UploadFileEl.value = '';
   formEl.reset();
-  showMessage(btnSuccessEl, successPopapEl);
 }
+
+const addPhoto = (uploader, preview) => {
+  const file = uploader.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+  }
+};
 
 /**
  * Функция с обработчиками, после загрузки фото открытие редактора фото,
@@ -114,61 +148,52 @@ function closeEditing() {
 
 const initUploadPopap = () => {
   UploadFileEl.addEventListener('change', () => {
+    addPhoto(UploadFileEl, imgEl);
     editingFormEl.classList.remove('hidden');
     bodyEl.classList.add('modal-open');
     btnCloseEditingEl.addEventListener('click', onEditingCloseBtnClick);
     formEl.addEventListener('change', onEffectChange);
     document.addEventListener('keydown', onInputEscKeydown);
   });
-  UploadFileEl.removeAttribute('required');
 };
 
-let errorMessage = '';
+let clearedHashtagsToValidate = [];
 
-const error = () => errorMessage;
+const validateHashtagsRegexp = (value) => {
+  const hashtagRegexp = /^#[a-zа-яё0-9]{1,19}$/i;
+  const hashtagsToValidate = value.trim().toLowerCase().split(' ');
+  clearedHashtagsToValidate = hashtagsToValidate.filter(Boolean);
+  return clearedHashtagsToValidate.every((hashtag) => hashtagRegexp.test(hashtag));
+};
 
-const isHashtagValidate = (value) => {
-  errorMessage = '';
-
-  const hashtagsText = value.toLowerCase().trim();
-
-  if (hashtagsText.length === 0) {
-    return true;
+const validateHashtagsDuplicates = () => {
+  if (clearedHashtagsToValidate) {
+    const duplicates = clearedHashtagsToValidate.filter((element, index, elements) => elements.indexOf(element) !== index);
+    return !duplicates.length;
   }
-
-  const hashtagsList = hashtagsText.split(' ');
-
-  const validators = [
-    {
-      check: hashtagsList.some((el) => !/^#[a-zа-яё0-9]{1,19}$/i.test(el)),
-      error: 'Хэштег должен начинаться с "#" и не может содержать пробелы, спецсимволы, символы пунктуации, эмодзи и т. д',
-    },
-    {
-      check: hashtagsList.some((el, i) => hashtagsList.includes(el, i + 1)),
-      error: 'Хэштеги не должны повторяться',
-    },
-    {
-      check: hashtagsList.length > MAX_HASHTAGS,
-      error: `Максимальное количество хэштегов ${MAX_HASHTAGS}`,
-    }
-  ];
-
-  return validators.forEach((validator) => {
-    const isInvalid = validator.check;
-    if (isInvalid) {
-      errorMessage = validator.error;
-    }
-    return !isInvalid;
-  });
 };
 
-const isDescrtiptionValidate = (value) => value.length <= 140;
+const validateHashtagsCount = () => clearedHashtagsToValidate.length <= MAX_HASHTAGS;
 
 pristine.addValidator(
   inputHashtagsEl,
-  isHashtagValidate,
-  error
+  validateHashtagsRegexp,
+  'Хештеги должны начинаться с #, содержать 1-19 букв без спецсимволов, символов пунктуации, эмодзи и т. д'
 );
+
+pristine.addValidator(
+  inputHashtagsEl,
+  validateHashtagsDuplicates,
+  'Хештеги не должны повторяться'
+);
+
+pristine.addValidator(
+  inputHashtagsEl,
+  validateHashtagsCount,
+  'Не более 5 хештегов'
+);
+
+const isDescrtiptionValidate = (value) => value.length <= 140;
 
 pristine.addValidator(
   inputDescriptionEl,
@@ -176,4 +201,4 @@ pristine.addValidator(
   'Длина комментария не более 140 символов'
 );
 
-export {initUploadPopap, setUserFormSubmit, closeEditing, showAlert};
+export {initUploadPopap, setUserFormSubmit, closeEditing, showAlert, showMessageError, unblockSubmitButton, showMessageSucces};

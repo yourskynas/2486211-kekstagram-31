@@ -1,4 +1,5 @@
 import { showComments, hideComments } from './open-comments.js';
+import { isEscapeKey } from './util.js';
 
 const bodyEl = document.querySelector('body');
 const fullPhotoEl = document.querySelector('.big-picture');
@@ -13,20 +14,19 @@ const openFullPhoto = ({url, description, likes, comments}) => {
   showComments(comments);
 };
 
-const closeFullPhoto = () => {
-  fullPhotoEl.classList.add('hidden');
-  bodyEl.classList.remove('modal-open');
-  // eslint-disable-next-line no-use-before-define
-  document.removeEventListener('keydown', onFullPhotoEscKeydown);
-  hideComments();
-};
-
 const onFullPhotoEscKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     closeFullPhoto();
   }
 };
+
+function closeFullPhoto() {
+  fullPhotoEl.classList.add('hidden');
+  bodyEl.classList.remove('modal-open');
+  document.removeEventListener('keydown', onFullPhotoEscKeydown);
+  hideComments();
+}
 
 btnCloseEl.addEventListener('click', () => {
   closeFullPhoto();

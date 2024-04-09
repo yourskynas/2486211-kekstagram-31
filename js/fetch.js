@@ -1,3 +1,5 @@
+import { showMessageError, unblockSubmitButton, showMessageSucces } from './photo-upload.js';
+
 const BASE_URL = 'https://31.javascript.htmlacademy.pro/kekstagram';
 const Route = {
   GET_DATA: '/data',
@@ -16,7 +18,7 @@ const getData = () => fetch(
     throw new Error();
   });
 
-const sendData = (body) => fetch(
+const sendData = (body, cb) => fetch(
   `${BASE_URL}${Route.SEND_DATA}`,
   {
     method: 'POST',
@@ -26,9 +28,13 @@ const sendData = (body) => fetch(
     if (!response.ok) {
       throw new Error();
     }
+    cb();
+    showMessageSucces();
   })
   .catch(() => {
-    throw new Error();
-  });
+    showMessageError();
+    unblockSubmitButton();
+  })
+  .finally(unblockSubmitButton);
 
 export {getData, sendData};
