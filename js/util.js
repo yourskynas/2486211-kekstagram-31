@@ -9,4 +9,6 @@ function debounce (callback, timeoutDelay = RERENDER_DELAY) {
   };
 }
 
-export {debounce};
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {debounce, isEscapeKey};

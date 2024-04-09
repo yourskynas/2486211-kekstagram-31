@@ -1,5 +1,6 @@
 import { onEffectChange } from './effects.js';
 import { sendData } from './fetch.js';
+import { isEscapeKey } from './util.js';
 
 const formEl = document.querySelector('.img-upload__form');
 const UploadFileEl = formEl.querySelector('.img-upload__input');
@@ -46,7 +47,7 @@ const onEditingCloseBtnClick = () => {
 };
 
 const onInputEscKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     if (document.activeElement === inputHashtagsEl || document.activeElement === inputDescriptionEl) {
       evt.stopPropagation();
@@ -64,7 +65,7 @@ const onMessageCloseBtn = (evt) => {
 };
 
 const onPopapEscKeydown = (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscapeKey(evt)) {
     evt.preventDefault();
     closePopap();
   }
