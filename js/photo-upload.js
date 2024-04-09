@@ -3,6 +3,7 @@ import { sendData } from './fetch.js';
 
 const formEl = document.querySelector('.img-upload__form');
 const UploadFileEl = formEl.querySelector('.img-upload__input');
+const previewEl = formEl.querySelector('.img-upload__preview img');
 const inputHashtagsEl = formEl.querySelector('.text__hashtags');
 const inputDescriptionEl = formEl.querySelector('.text__description');
 const editingFormEl = formEl.querySelector('.img-upload__overlay');
@@ -17,6 +18,7 @@ const btnErrorEl = errorPopapEl.querySelector('.error__button');
 
 const ALERT_SHOW_TIME = 5000;
 const MAX_HASHTAGS = 5;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const SubmitButtonText = {
   IDLE: 'Сохранить',
@@ -126,6 +128,17 @@ function closeEditing() {
   formEl.reset();
 }
 
+const addPhoto = (uploader, preview) => {
+  const file = uploader.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    preview.src = URL.createObjectURL(file);
+  }
+};
+
 /**
  * Функция с обработчиками, после загрузки фото открытие редактора фото,
  * добавление обработчика на закрытие редактора (так же с помощью esc)
@@ -133,13 +146,13 @@ function closeEditing() {
 
 const initUploadPopap = () => {
   UploadFileEl.addEventListener('change', () => {
+    addPhoto(UploadFileEl, previewEl);
     editingFormEl.classList.remove('hidden');
     bodyEl.classList.add('modal-open');
     btnCloseEditingEl.addEventListener('click', onEditingCloseBtnClick);
     formEl.addEventListener('change', onEffectChange);
     document.addEventListener('keydown', onInputEscKeydown);
   });
-  UploadFileEl.removeAttribute('required');
 };
 
 let errorMessage = '';
