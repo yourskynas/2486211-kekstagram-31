@@ -43,7 +43,7 @@ const onbtnFilterDiscussed = (evt) => {
   debounceRender(filteredPhotos);
 };
 
-const filterPhoto = (photoData) => {
+const filterPhotos = (photoData) => {
   photos = photoData;
   renderPhotos(photoData);
   imgFiltersEl.classList.remove('img-filters--inactive');
@@ -52,4 +52,4 @@ const filterPhoto = (photoData) => {
   btnFilterDiscussedEl.addEventListener('click', onbtnFilterDiscussed);
 };
 
-export {filterPhoto};
+export {filterPhotos};

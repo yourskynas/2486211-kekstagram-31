@@ -2,9 +2,18 @@ import { onEffectChange } from './effects.js';
 import { sendData } from './fetch.js';
 import { isEscapeKey } from './util.js';
 
+const ALERT_SHOW_TIME = 5000;
+const MAX_HASHTAGS = 5;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+const SubmitButtonText = {
+  IDLE: 'Сохранить',
+  SENDING: 'Сохраняю...'
+};
+
 const formEl = document.querySelector('.img-upload__form');
 const UploadFileEl = formEl.querySelector('.img-upload__input');
-const previewEl = formEl.querySelector('.img-upload__preview img');
+const imgEl = formEl.querySelector('.img-upload__preview img');
 const inputHashtagsEl = formEl.querySelector('.text__hashtags');
 const inputDescriptionEl = formEl.querySelector('.text__description');
 const editingFormEl = formEl.querySelector('.img-upload__overlay');
@@ -16,15 +25,6 @@ const btnSuccessEl = successPopapEl.querySelector('.success__button');
 const errorPopapEl = document.querySelector('#error').content.querySelector('.error');
 const dataErrorEl = document.querySelector('#data-error').content.querySelector('.data-error');
 const btnErrorEl = errorPopapEl.querySelector('.error__button');
-
-const ALERT_SHOW_TIME = 5000;
-const MAX_HASHTAGS = 5;
-const FILE_TYPES = ['jpg', 'jpeg', 'png'];
-
-const SubmitButtonText = {
-  IDLE: 'Сохранить',
-  SENDING: 'Сохраняю...'
-};
 
 const pristine = new Pristine(formEl, {
   classTo: 'img-upload__field-wrapper',
@@ -71,23 +71,23 @@ const onPopapEscKeydown = (evt) => {
   }
 };
 
-const onOutsideTarget = (evt) => {
-  if (evt.target === successPopapEl || evt.target === errorPopapEl) {
-    closePopap();
-  }
-};
+// const onOutsideTarget = (evt) => {
+//   if (evt.target === successPopapEl || evt.target === errorPopapEl) {
+//     closePopap();
+//   }
+// };
 
 function closePopap () {
   successPopapEl.remove();
   errorPopapEl.remove();
   document.removeEventListener('keydown', onPopapEscKeydown);
-  document.removeEventListener('click', onOutsideTarget);
+  // document.removeEventListener('click', onOutsideTarget);
 }
 
 const showMessage = (btn, message) => {
   btn.addEventListener('click', onMessageCloseBtn);
   document.addEventListener('keydown', onPopapEscKeydown);
-  document.addEventListener('click', onOutsideTarget);
+  // document.addEventListener('click', onOutsideTarget);
   bodyEl.append(message);
 };
 
@@ -107,7 +107,6 @@ const setUserFormSubmit = (onSuccess) => {
     if (isValid) {
       blockSubmitButton();
       sendData(new FormData(evt.target), onSuccess)
-        .then(() => showMessage(btnSuccessEl, successPopapEl))
         .catch(() => {
           showMessage(btnErrorEl, errorPopapEl);
           unblockSubmitButton();
@@ -127,6 +126,7 @@ function closeEditing() {
   document.removeEventListener('keydown', onInputEscKeydown);
   UploadFileEl.value = '';
   formEl.reset();
+  showMessage(btnSuccessEl, successPopapEl);
 }
 
 const addPhoto = (uploader, preview) => {
@@ -147,7 +147,7 @@ const addPhoto = (uploader, preview) => {
 
 const initUploadPopap = () => {
   UploadFileEl.addEventListener('change', () => {
-    addPhoto(UploadFileEl, previewEl);
+    addPhoto(UploadFileEl, imgEl);
     editingFormEl.classList.remove('hidden');
     bodyEl.classList.add('modal-open');
     btnCloseEditingEl.addEventListener('click', onEditingCloseBtnClick);
