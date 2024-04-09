@@ -99,6 +99,13 @@ const showAlert = () => {
   }, ALERT_SHOW_TIME);
 };
 
+const showMessageError = () => {
+  showMessage(btnErrorEl, errorPopapEl);
+};
+const showMessageSucces = () => {
+  showMessage(btnSuccessEl, successPopapEl);
+};
+
 const setUserFormSubmit = (onSuccess) => {
   formEl.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -106,12 +113,7 @@ const setUserFormSubmit = (onSuccess) => {
     const isValid = pristine.validate();
     if (isValid) {
       blockSubmitButton();
-      sendData(new FormData(evt.target), onSuccess)
-        .catch(() => {
-          showMessage(btnErrorEl, errorPopapEl);
-          unblockSubmitButton();
-        })
-        .finally(unblockSubmitButton);
+      sendData(new FormData(evt.target), onSuccess);
     }
   });
 };
@@ -126,7 +128,6 @@ function closeEditing() {
   document.removeEventListener('keydown', onInputEscKeydown);
   UploadFileEl.value = '';
   formEl.reset();
-  showMessage(btnSuccessEl, successPopapEl);
 }
 
 const addPhoto = (uploader, preview) => {
@@ -209,4 +210,4 @@ pristine.addValidator(
   'Длина комментария не более 140 символов'
 );
 
-export {initUploadPopap, setUserFormSubmit, closeEditing, showAlert};
+export {initUploadPopap, setUserFormSubmit, closeEditing, showAlert, showMessageError, unblockSubmitButton, showMessageSucces};
