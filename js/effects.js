@@ -1,3 +1,5 @@
+const inProcent = 100;
+
 const Scale = {
   MIN: 25,
   MAX: 100
@@ -53,8 +55,6 @@ const effectOptions = {
     filter: 'none',
   }
 };
-
-const inProcent = 100;
 
 const formEl = document.querySelector('.img-upload__form');
 const btnScaleValueEl = formEl.querySelector('.scale__control--value');
