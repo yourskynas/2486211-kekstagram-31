@@ -72,23 +72,23 @@ const onPopapEscKeydown = (evt) => {
   }
 };
 
-// const onOutsideTarget = (evt) => {
-//   if (evt.target === successPopapEl || evt.target === errorPopapEl) {
-//     closePopap();
-//   }
-// };
+const onOutsideTarget = (evt) => {
+  if (evt.target === successPopapEl || evt.target === errorPopapEl) {
+    closePopap();
+  }
+};
 
 function closePopap () {
   successPopapEl.remove();
   errorPopapEl.remove();
   document.removeEventListener('keydown', onPopapEscKeydown);
-  // document.removeEventListener('click', onOutsideTarget);
+  document.removeEventListener('click', onOutsideTarget);
 }
 
 const showMessage = (btn, message) => {
   btn.addEventListener('click', onMessageCloseBtn);
   document.addEventListener('keydown', onPopapEscKeydown);
-  // document.addEventListener('click', onOutsideTarget);
+  document.addEventListener('click', onOutsideTarget);
   bodyEl.append(message);
 };
 
