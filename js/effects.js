@@ -1,40 +1,7 @@
-const formEl = document.querySelector('.img-upload__form');
-const btnScaleValueEl = formEl.querySelector('.scale__control--value');
-const btnScaleSmallerEl = formEl.querySelector('.scale__control--smaller');
-const btnScaleBiggerEl = formEl.querySelector('.scale__control--bigger');
-const effectSliderEl = formEl.querySelector('.effect-level__slider');
-const effectValueEl = formEl.querySelector('.effect-level__value');
-const imgUploadPreviewEl = formEl.querySelector('.img-upload__preview');
-const imageEl = formEl.querySelector('img');
-const effectLevelEl = formEl.querySelector('.img-upload__effect-level');
-const effectsList = formEl.querySelectorAll('.effects__radio');
-
 const Scale = {
   MIN: 25,
   MAX: 100
 };
-
-effectLevelEl.classList.add('hidden');
-
-let numberScaleValue = parseInt(btnScaleValueEl.value.replace('%'), 10);
-const onbtnScaleSmaller = () => {
-  if (numberScaleValue > Scale.MIN) {
-    numberScaleValue -= Scale.MIN;
-  }
-  btnScaleValueEl.value = `${ numberScaleValue }%`;
-  imageEl.style.transform = `scale(${ numberScaleValue / 100 })`;
-};
-
-const onbtnScaleBigger = () => {
-  if (numberScaleValue < Scale.MAX) {
-    numberScaleValue += Scale.MIN;
-  }
-  btnScaleValueEl.value = `${ numberScaleValue }%`;
-  imageEl.style.transform = `scale(${ numberScaleValue / 100 })`;
-};
-
-btnScaleSmallerEl.addEventListener('click', onbtnScaleSmaller);
-btnScaleBiggerEl.addEventListener('click', onbtnScaleBigger);
 
 const effectOptions = {
   chrome: {
@@ -86,6 +53,41 @@ const effectOptions = {
     filter: 'none',
   }
 };
+
+const inProcent = 100;
+
+const formEl = document.querySelector('.img-upload__form');
+const btnScaleValueEl = formEl.querySelector('.scale__control--value');
+const btnScaleSmallerEl = formEl.querySelector('.scale__control--smaller');
+const btnScaleBiggerEl = formEl.querySelector('.scale__control--bigger');
+const effectSliderEl = formEl.querySelector('.effect-level__slider');
+const effectValueEl = formEl.querySelector('.effect-level__value');
+const imgUploadPreviewEl = formEl.querySelector('.img-upload__preview');
+const imageEl = formEl.querySelector('img');
+const effectLevelEl = formEl.querySelector('.img-upload__effect-level');
+const effectsList = formEl.querySelectorAll('.effects__radio');
+
+effectLevelEl.classList.add('hidden');
+
+let numberScaleValue = parseInt(btnScaleValueEl.value.replace('%'), 10);
+const onbtnScaleSmaller = () => {
+  if (numberScaleValue > Scale.MIN) {
+    numberScaleValue -= Scale.MIN;
+  }
+  btnScaleValueEl.value = `${ numberScaleValue }%`;
+  imageEl.style.transform = `scale(${ numberScaleValue / inProcent })`;
+};
+
+const onbtnScaleBigger = () => {
+  if (numberScaleValue < Scale.MAX) {
+    numberScaleValue += Scale.MIN;
+  }
+  btnScaleValueEl.value = `${ numberScaleValue }%`;
+  imageEl.style.transform = `scale(${ numberScaleValue / inProcent })`;
+};
+
+btnScaleSmallerEl.addEventListener('click', onbtnScaleSmaller);
+btnScaleBiggerEl.addEventListener('click', onbtnScaleBigger);
 
 noUiSlider.create(effectSliderEl, {
   range: {

@@ -1,14 +1,14 @@
 import { debounce } from './util.js';
 import { renderPhotos } from './render-photos.js';
 
+const debounceRender = debounce(renderPhotos);
+const MAX_PHOTO_COUNT = 10;
+let photos = [];
+
 const imgFiltersEl = document.querySelector('.img-filters');
 const btnFilterDefaultEl = imgFiltersEl.querySelector('#filter-default');
 const btnFilterRandomEl = imgFiltersEl.querySelector('#filter-random');
 const btnFilterDiscussedEl = imgFiltersEl.querySelector('#filter-discussed');
-const MAX_PHOTO_COUNT = 10;
-
-let photos = [];
-const debounceRender = debounce(renderPhotos);
 
 const changeClass = (evt) => {
   const checkedBtn = document.querySelector('.img-filters__button--active');
