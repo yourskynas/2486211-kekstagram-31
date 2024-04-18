@@ -111,16 +111,18 @@ noUiSlider.create(effectSliderEl, {
 });
 
 const addFilter = (filter, value) => {
-  if (filter === 'grayscale') {
-    imgUploadPreviewEl.style.filter = `${filter}(${value})`;
-  } else if (filter === 'sepia') {
-    imgUploadPreviewEl.style.filter = `${filter}(${value})`;
-  } else if (filter === 'invert') {
-    imgUploadPreviewEl.style.filter = `${filter}(${value}%)`;
-  } else if (filter === 'blur') {
-    imgUploadPreviewEl.style.filter = `${filter}(${value}px)`;
-  } else if (filter === 'brightness') {
-    imgUploadPreviewEl.style.filter = `${filter}(${value})`;
+  switch (filter) {
+    case 'grayscale':
+    case 'sepia':
+    case 'brightness':
+      imgUploadPreviewEl.style.filter = `${filter}(${value})`;
+      break;
+    case 'invert':
+      imgUploadPreviewEl.style.filter = `${filter}(${value}%)`;
+      break;
+    case 'blur':
+      imgUploadPreviewEl.style.filter = `${filter}(${value}px)`;
+      break;
   }
 };
 

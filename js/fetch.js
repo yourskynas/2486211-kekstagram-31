@@ -33,7 +33,6 @@ const sendData = (body, cb) => fetch(
   })
   .catch(() => {
     showMessageError();
-    unblockSubmitButton();
   })
   .finally(unblockSubmitButton);
 
