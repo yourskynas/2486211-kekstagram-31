@@ -4,6 +4,7 @@ import { isEscapeKey } from './util.js';
 
 const ALERT_SHOW_TIME = 5000;
 const MAX_HASHTAGS = 5;
+const MAX_LENGTH_COMMENT = 140;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const SubmitButtonText = {
@@ -193,7 +194,7 @@ pristine.addValidator(
   'Не более 5 хештегов'
 );
 
-const isDescrtiptionValidate = (value) => value.length <= 140;
+const isDescrtiptionValidate = (value) => value.length <= MAX_LENGTH_COMMENT;
 
 pristine.addValidator(
   inputDescriptionEl,
